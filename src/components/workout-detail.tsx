@@ -5,7 +5,7 @@ import { useExerciseMap, useStore } from '@/lib/store';
 import { fmtClock, fmtDate, fmtDuration, fmtVolume, fmtWeight } from '@/lib/units';
 import { C, MUSCLE_COLOR, S } from '@/theme';
 
-import { MuscleBadge } from './exercise-browser';
+import { ExerciseThumb } from './exercise-demo';
 import { Btn, Card, Empty, Icon, Pill, Row, Stat, Txt } from './ui';
 
 export function WorkoutDetail({
@@ -86,7 +86,7 @@ export function WorkoutDetail({
         return (
           <Card key={e.id} style={{ gap: 6 }}>
             <Row style={{ marginBottom: 4 }}>
-              {meta ? <MuscleBadge muscle={meta.muscle} size={30} /> : null}
+              {meta ? <ExerciseThumb exerciseId={e.exerciseId} muscle={meta.muscle} size={36} /> : null}
               <Txt
                 v="h2"
                 style={{ flex: 1 }}

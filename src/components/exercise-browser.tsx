@@ -7,6 +7,7 @@ import type { Equipment, Exercise, Muscle, TrackingType } from '@/lib/types';
 import { fmtRelativeDay } from '@/lib/units';
 import { C, MUSCLE_COLOR, R, S } from '@/theme';
 
+import { ExerciseThumb } from './exercise-demo';
 import { Btn, Card, Chip, Field, Icon, ListItem, Row, Segmented, Txt } from './ui';
 
 export function MuscleBadge({ muscle, size = 36 }: { muscle: Muscle; size?: number }) {
@@ -108,7 +109,7 @@ export function ExerciseBrowser({
               testID={`exercise-${e.id}`}
               title={e.name}
               subtitle={`${e.muscle} · ${e.equipment}${lastDone[e.id] ? ` · ${fmtRelativeDay(lastDone[e.id])}` : ''}`}
-              left={<MuscleBadge muscle={e.muscle} />}
+              left={<ExerciseThumb exerciseId={e.id} muscle={e.muscle} />}
               selected={activeId === e.id || sel}
               onPress={() => onPress(e)}
               right={

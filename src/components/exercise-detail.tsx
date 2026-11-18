@@ -4,10 +4,11 @@ import { Alert, Platform, View } from 'react-native';
 import { bestsFrom, e1rm, isWorking, sessionsFor, setVolume } from '@/lib/stats';
 import { useExerciseMap, useStore } from '@/lib/store';
 import { fmtClock, fmtDate, fmtWeight, toDisplay } from '@/lib/units';
-import { C, MUSCLE_COLOR, S } from '@/theme';
+import { C, MUSCLE_COLOR, S, useLayout } from '@/theme';
 
 import { LineChart } from './charts';
 import { MuscleBadge } from './exercise-browser';
+import { ExerciseDemo, ExerciseSteps, exerciseSteps, hasDemo } from './exercise-demo';
 import { Btn, Card, Empty, Field, Icon, Pill, Row, SectionHeader, Segmented, Stat, Txt } from './ui';
 
 type Metric = 'e1rm' | 'weight' | 'volume' | 'reps';
@@ -22,6 +23,7 @@ export function ExerciseDetail({ exerciseId, onDeleted }: { exerciseId: string; 
   const deleteExercise = useStore((s) => s.deleteExercise);
   const sessions = useMemo(() => sessionsFor(exerciseId, history), [exerciseId, history]);
   const bests = useMemo(() => bestsFrom(sessions.flatMap((s) => s.sets)), [sessions]);
+  const { unfolded } = useLayout();
   const [metric, setMetric] = useState<Metric>(ex?.tracking === 'weight_reps' ? 'e1rm' : 'reps');
 
   if (!ex) return <Empty icon="help-circle-outline" title="Exercise not found" />;
@@ -54,8 +56,9 @@ export function ExerciseDetail({ exerciseId, onDeleted }: { exerciseId: string; 
 
   return (
     <View style={{ gap: S.md }}>
+      <ExerciseDemo exerciseId={ex.id} height={unfolded ? 260 : 220} />
       <Row style={{ gap: S.md }}>
-        <MuscleBadge muscle={ex.muscle} size={52} />
+        {hasDemo(ex.id) ? null : <MuscleBadge muscle={ex.muscle} size={52} />}
         <View style={{ flex: 1 }}>
           <Txt v="title" numberOfLines={2}>
             {ex.name}
@@ -68,12 +71,22 @@ export function ExerciseDetail({ exerciseId, onDeleted }: { exerciseId: string; 
         </View>
       </Row>
 
+      {exerciseSteps(ex.id).length ? (
+        <Card style={{ gap: S.md }}>
+          <Row>
+            <Icon name="school-outline" color={C.accent} />
+            <Txt v="h2">How to do it</Txt>
+          </Row>
+          <ExerciseSteps exerciseId={ex.id} max={4} />
+        </Card>
+      ) : null}
+
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: S.sm }}>
         {weighted ? (
           <>
-            <Stat label="Est. 1RM" value={fmtWeight(bests.e1rm, unit, true)} icon="trophy" color={C.gold} />
-            <Stat label="Heaviest" value={fmtWeight(bests.weight, unit, true)} icon="weight-kilogram" />
-            <Stat label="Best set" value={fmtWeight(bests.volume, unit, true)} icon="chart-box-outline" color={C.info} />
+            <Stat label="Est. 1RM" value={bests.e1rm ? fmtWeight(bests.e1rm, unit, true) : '—'} icon="trophy" color={C.gold} />
+            <Stat label="Heaviest" value={bests.weight ? fmtWeight(bests.weight, unit, true) : '—'} icon="weight-kilogram" />
+            <Stat label="Best set" value={bests.volume ? fmtWeight(bests.volume, unit, true) : '—'} icon="chart-box-outline" color={C.info} />
           </>
         ) : (
           <Stat label="Most reps" value={String(bests.reps || '—')} icon="trophy" color={C.gold} />

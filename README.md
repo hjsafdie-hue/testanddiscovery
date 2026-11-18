@@ -18,6 +18,7 @@ Ironfold takes the best-loved features from today's leading gym apps:
 | Routines with sets / reps / rest per exercise, plus starter Push-Pull-Legs and Full Body routines | Hevy / Strong |
 | Supersets, warm-up ramp generator, set types (warm-up, drop, failure), per-exercise notes | Strong / Hevy |
 | Plate calculator (kg and lb) | Strong |
+| **How-to demos**: real gym photos of each machine/lift, looping between start and end position like a GIF, plus step-by-step instructions (bundled, work offline) | Hevy / JEFIT |
 | Exercise library (~100 lifts) with search, muscle filters, custom exercises, and per-exercise charts and history | JEFIT |
 | History calendar, weekly goal ring and streak, weekly volume, top-lift 1RM trends, body-weight log | Hevy / Strong |
 
@@ -59,6 +60,10 @@ npm run build:apk         # EAS "preview" profile → downloadable .apk
 ```
 
 Open the link EAS prints on your phone, and install the APK. For a local build instead, run `npx expo run:android` with Android Studio installed.
+
+## Credits
+
+Exercise photos and instructions come from [Free Exercise DB](https://github.com/yuhonas/free-exercise-db), released into the public domain under the Unlicense.
 
 ## Project layout
 

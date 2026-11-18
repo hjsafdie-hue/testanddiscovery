@@ -4,7 +4,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BarChart, LineChart } from '@/components/charts';
-import { MuscleBadge } from '@/components/exercise-browser';
+import { ExerciseThumb } from '@/components/exercise-demo';
 import { Btn, Card, Empty, Field, Header, Icon, IconBtn, Row, Segmented, Stat, Txt } from '@/components/ui';
 import { PR_LABEL, e1rm, isWorking, sessionsFor, weeklyStats, workoutVolume } from '@/lib/stats';
 import { useExerciseMap, useStore } from '@/lib/store';
@@ -118,7 +118,7 @@ export default function ProgressScreen() {
               onPress={() => router.push({ pathname: '/exercise/[id]', params: { id } })}>
               <Card style={{ gap: S.sm }}>
                 <Row>
-                  {meta ? <MuscleBadge muscle={meta.muscle} size={30} /> : null}
+                  {meta ? <ExerciseThumb exerciseId={id} muscle={meta.muscle} size={36} /> : null}
                   <Txt v="h2" style={{ flex: 1 }} numberOfLines={1}>
                     {meta?.name}
                   </Txt>

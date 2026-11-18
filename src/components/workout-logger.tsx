@@ -8,7 +8,7 @@ import type { Exercise, Unit, WorkoutExercise, WorkoutSet } from '@/lib/types';
 import { fmtClock, fmtWeight, fromDisplay, parseNum, toDisplay } from '@/lib/units';
 import { C, R, S } from '@/theme';
 
-import { MuscleBadge } from './exercise-browser';
+import { ExerciseDemo, ExerciseSteps, ExerciseThumb, exerciseSteps, hasDemo } from './exercise-demo';
 import { Field, Icon, IconBtn, type IconName, Pill, Row, Txt } from './ui';
 
 const KIND_LABEL = { warmup: 'W', drop: 'D', failure: 'F' } as const;
@@ -206,6 +206,8 @@ export function ExerciseCard({
   const toggleSuperset = useStore((s) => s.toggleSuperset);
   const [menu, setMenu] = useState(false);
   const [showNotes, setShowNotes] = useState(!!entry.notes);
+  const [showDemo, setShowDemo] = useState(false);
+  const demo = hasDemo(entry.exerciseId) || exerciseSteps(entry.exerciseId).length > 0;
 
   const prevSets = useMemo(() => sessionsFor(entry.exerciseId, history)[0]?.sets ?? [], [entry.exerciseId, history]);
   const hint = useMemo(
@@ -227,7 +229,18 @@ export function ExerciseCard({
   return (
     <View style={[styles.card, focused && { borderColor: C.accent }]}>
       <Pressable style={styles.cardHeader} onPress={() => onFocus?.(entry.exerciseId)}>
-        <MuscleBadge muscle={meta.muscle} size={36} />
+        <Pressable
+          onPress={() => demo && setShowDemo(!showDemo)}
+          accessibilityRole="button"
+          accessibilityLabel={`Show how to do ${meta.name}`}
+          hitSlop={4}>
+          <ExerciseThumb exerciseId={entry.exerciseId} muscle={meta.muscle} size={44} />
+          {demo ? (
+            <View style={styles.thumbPlay}>
+              <Icon name={showDemo ? 'close' : 'play'} size={11} color={C.onAccent} />
+            </View>
+          ) : null}
+        </Pressable>
         <View style={{ flex: 1, minWidth: 0 }}>
           <Txt
             v="h2"
@@ -256,10 +269,18 @@ export function ExerciseCard({
           {index < total - 1 || entry.supersetId ? (
             <MenuAction icon="link-variant" label={entry.supersetId ? 'Unlink' : 'Superset ↓'} color={C.purple} onPress={() => toggleSuperset(entry.id)} />
           ) : null}
+          {demo ? <MenuAction icon="play-circle-outline" label="How to" color={C.accent} onPress={() => setShowDemo(!showDemo)} /> : null}
           <MenuAction icon="note-edit-outline" label="Note" onPress={() => setShowNotes(!showNotes)} />
           {index > 0 ? <MenuAction icon="arrow-up" label="Up" onPress={() => moveExercise(entry.id, -1)} /> : null}
           {index < total - 1 ? <MenuAction icon="arrow-down" label="Down" onPress={() => moveExercise(entry.id, 1)} /> : null}
           <MenuAction icon="delete-outline" label="Remove" color={C.danger} onPress={() => removeExercise(entry.id)} />
+        </View>
+      ) : null}
+
+      {showDemo ? (
+        <View style={{ paddingHorizontal: S.md, gap: S.md, paddingBottom: S.sm }}>
+          <ExerciseDemo exerciseId={entry.exerciseId} height={compact ? 150 : 190} />
+          <ExerciseSteps exerciseId={entry.exerciseId} max={3} />
         </View>
       ) : null}
 
@@ -452,6 +473,19 @@ const styles = StyleSheet.create({
     marginBottom: S.sm,
     borderRadius: R.sm,
     backgroundColor: C.surface2,
+  },
+  thumbPlay: {
+    position: 'absolute',
+    right: -4,
+    bottom: -4,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: C.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: C.surface,
   },
   supersetWrap: { borderLeftWidth: 3, borderLeftColor: C.purple, paddingLeft: 6, borderRadius: 4 },
   supersetLink: { alignItems: 'center', marginTop: -6, marginBottom: -12, zIndex: 1 },

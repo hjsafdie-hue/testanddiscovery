@@ -6,7 +6,7 @@ import { useExerciseMap, useStore } from '@/lib/store';
 import { fmtClock, fmtWeight } from '@/lib/units';
 import { C, R, S } from '@/theme';
 
-import { MuscleBadge } from './exercise-browser';
+import { ExerciseThumb } from './exercise-demo';
 import { Btn, Card, Empty, Field, IconBtn, Row, Txt } from './ui';
 
 export function Stepper({
@@ -115,7 +115,7 @@ export function RoutineEditor({
         return (
           <Card key={row.id} style={{ gap: S.md }}>
             <Row>
-              {meta ? <MuscleBadge muscle={meta.muscle} size={32} /> : null}
+              {meta ? <ExerciseThumb exerciseId={row.exerciseId} muscle={meta.muscle} size={40} /> : null}
               <View style={{ flex: 1 }}>
                 <Txt v="h2" numberOfLines={1}>
                   {meta?.name ?? 'Unknown'}
